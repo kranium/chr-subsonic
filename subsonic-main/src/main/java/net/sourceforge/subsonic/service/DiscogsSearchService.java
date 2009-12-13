@@ -20,6 +20,7 @@ package net.sourceforge.subsonic.service;
 
 import net.sourceforge.subsonic.Logger;
 import net.sourceforge.subsonic.util.StringUtil;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -149,7 +150,11 @@ public class DiscogsSearchService {
                 throw new IOException("Method failed: " + method.getStatusLine());
             }
 
-            in = new GZIPInputStream(method.getResponseBodyAsStream());
+            if (isGzipResponse(method)) {
+                in = new GZIPInputStream(method.getResponseBodyAsStream());
+            } else {
+                in = method.getResponseBodyAsStream();
+            }
             result = IOUtils.toString(in);
 
         } finally {
@@ -158,4 +163,13 @@ public class DiscogsSearchService {
         }
         return result;
     }
+
+     private boolean isGzipResponse(HttpMethod httpMethod) {
+         boolean isGzip = false;
+         Header encodingHeader = httpMethod.getResponseHeader("Content-Encoding");
+         if (encodingHeader != null && encodingHeader.getValue() != null) {
+             isGzip = encodingHeader.getValue().toLowerCase().indexOf("gzip") != -1;
+         }
+         return isGzip;
+     }
 }
