@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:a="http://schemas.android.com/apk/res/android"
+          package="net.sourceforge.subsonic.androidapp"
+          a:versionCode="4"
+          a:versionName="1.1">
+
+    <uses-permission a:name="android.permission.INTERNET"/>
+    <uses-permission a:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission a:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <uses-sdk a:minSdkVersion="3"/>
+
+    <application a:label="Subsonic" a:icon="@drawable/launch">
+
+        <activity a:name=".activity.MainActivity"
+                  a:label="Subsonic"
+                  a:screenOrientation="portrait"
+                  a:launchMode="singleTask">
+            <intent-filter>
+                <action a:name="android.intent.action.MAIN"/>
+                <category a:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity a:name=".activity.SelectArtistActivity"
+                  a:screenOrientation="portrait"/>
+
+        <activity a:name=".activity.SelectAlbumActivity"
+                  a:screenOrientation="portrait"/>
+
+        <activity a:name=".activity.DownloadActivity"
+                  a:launchMode="singleTask"
+                  a:screenOrientation="portrait"/>
+
+        <activity a:name=".activity.SettingsActivity"
+                  a:launchMode="singleTask"
+                  a:screenOrientation="portrait"/>
+
+        <activity a:name=".activity.ErrorActivity"
+                  a:label="@string/error.label"
+                  a:launchMode="singleTask"
+                  a:screenOrientation="portrait"/>
+
+        <activity a:name=".activity.HelpActivity"
+                  a:label="@string/help.label"
+                  a:launchMode="singleTask"
+                  a:screenOrientation="portrait"/>
+
+        <service a:name=".service.DownloadServiceImpl"
+                 a:label="Subsonic Download Service"/>
+
+    </application>
+
+</manifest>

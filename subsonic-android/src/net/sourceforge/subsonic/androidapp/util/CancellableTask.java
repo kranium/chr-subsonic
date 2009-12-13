@@ -1,0 +1,65 @@
+/*
+ This file is part of Subsonic.
+
+ Subsonic is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Subsonic is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Subsonic.  If not, see <http://www.gnu.org/licenses/>.
+
+ Copyright 2009 (C) Sindre Mehus
+ */
+package net.sourceforge.subsonic.androidapp.util;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
+import android.util.Log;
+
+/**
+ * @author Sindre Mehus
+ * @version $Id$
+ */
+public abstract class CancellableTask {
+
+    private static final String TAG = CancellableTask.class.getSimpleName();
+
+    private final AtomicBoolean cancelled = new AtomicBoolean(false);
+    private final AtomicReference<Thread> thread = new AtomicReference<Thread>();
+
+    public void cancel() {
+        cancelled.set(true);
+        Thread t = thread.get();
+        if (t != null && t.isAlive()) {
+            t.interrupt();
+        }
+    }
+
+    public boolean isCancelled() {
+        return cancelled.get();
+    }
+
+    public abstract void execute();
+
+    public void start() {
+        thread.set(new Thread() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Starting thread for " + CancellableTask.this);
+                try {
+                    execute();
+                } finally {
+                    Log.d(TAG, "Stopping thread for " + CancellableTask.this);
+                }
+            }
+        });
+        thread.get().start();
+    }
+}
